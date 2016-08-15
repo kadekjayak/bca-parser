@@ -1,0 +1,13 @@
+{
+    "name": "kadekjayak/bca-parser",
+    "description": "Scrapper for KLIK BCA",
+    "type": "library",
+    "license": "Apache",
+    "authors": [
+        {
+            "name": "kadekjayak",
+            "email": "kadekjayak@yahoo.co.id"
+        }
+    ],
+    "require": {}
+}
