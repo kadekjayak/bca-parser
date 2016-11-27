@@ -77,7 +77,17 @@ class BCAParser {
 	{
 		$result = curl_exec($this->curlHandle);
 		if( BCA_PARSER_DEBUG == true ) {
+			$http_code = curl_getinfo($this->curlHandle, CURLINFO_HTTP_CODE);
 			print_r($result);
+
+			/**
+			* Perlu diwapadai jangan melakukan pengecekan dengan interval waktu dibawah 10 menit ! 
+			*/
+			if($http_code == 302) {
+				echo 'HALAMAN DIREDIRECT, harap tunggu beberapa menit ( biasanya 10 Menit! )';
+				exit;
+			}
+
 		}
 		return $result;
 	}
@@ -204,6 +214,90 @@ class BCAParser {
 		$table = $dom->getElementsByTagName('table');
 		$table = $table->item(4);
 		return $dom->saveHTML($table);
+	}
+
+
+	private function getArrayValues($html)
+	{
+		$dom = new DOMDocument();
+		$dom->loadHTML($html);
+		$table = $dom->getElementsByTagName('table');
+		$rows = $dom->getElementsByTagName('tr');
+
+		$datas = [];
+		for ($i = 0; $i < $rows->length; $i++) {
+			if($i== 0 ) continue;
+		    $cols = $rows->item($i)->getElementsbyTagName("td");
+
+		    $date = $cols->item(0)->nodeValue;
+		    $date = explode('/', $date);
+		    $date = date('Y') . '-' . $date[1] . '-' . $date[0];
+
+		    $description = $cols->item(1);
+		    $flows = $cols->item(2)->nodeValue;
+		    $descriptionText = $dom->saveHTML($description);
+
+		    $descriptionText = str_replace('<td>', '', $descriptionText);
+		    $descriptionText = str_replace('</td>', '', $descriptionText);
+		    $description = explode('<br>', $descriptionText);
+
+		    $data = compact('date','description', 'flows');
+		    $datas[] = $data;
+		}
+		return $datas;
+	}
+
+
+	/**
+	* Ambil daftar transaksi pada janga waktu tertentu
+	*
+	*
+	* @param string $from 'Y-m-d'
+	* @param string $to 'Y-m-d'
+	* @return array
+	**/
+	public function getListTransaksi($from, $to)
+	{
+		$result = $this->getMutasiRekening($from, $to);
+		$result = $this->getArrayValues($result);
+		return $result;
+	}
+
+	/**
+	* getTransaksiCredit
+	*
+	* Ambil semua list transaksi credit (kas Masuk)
+	*
+	* @param string $from 'Y-m-d'
+	* @param string $to 'Y-m-d'
+	* @return array
+	*/
+	public function getTransaksiCredit($from, $to)
+	{
+		$result = $this->getListTransaksi($from, $to);
+		$result = array_filter($results, function($row){
+			return $row['flows'] == 'CR';
+		});
+		return $result;
+	}
+
+	/**
+	* getTransaksiDebit
+	*
+	* Ambil semua list transaksi debit (kas Keluar)
+	* Struktur data tidak konsisten !, tergantung dari jenis transaksi
+	*
+	* @param string $from 'Y-m-d'
+	* @param string $to 'Y-m-d'
+	* @return array
+	*/
+	public function getTransaksiDebit($from, $to)
+	{
+		$result = $this->getListTransaksi($from, $to);
+		$result = array_filter($result, function($row){
+			return $row['flows'] == 'DB';
+		});
+		return $result;
 	}
 
 }

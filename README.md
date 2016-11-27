@@ -26,5 +26,54 @@ mengambil mutasi rekening dapat menggunakan method `getMutasiRekening` dengan pa
 
 method ini me return element html `<table>` yang berisikan daftar transaksi
 
+jika ingin hasil dalam format array gunakan method `getListTransaksi(dari, sampai)`, lihat source nya langsung.
+
+
+### Mengambil Mutasi Rekening Credit
+Untuk mengambil histori transaksi uang yang masuk ke dalam rekening (kredit) dapat menggunakan method `getTransaksiCredit` dengan parameter range tanggal transaksi yang diinginkan `getTransaksiCredit(dari, sampai)`. Contoh :
+	
+	$Html = $Parser->getTransaksiCredit('2016-11-20', '2016-11-27');
+
+Struktur Array yang dihasilkan kurang lebih seperti berikut, perhatikan ada perbedaan value antara transaksi Antar Rekening dan transaksi Antar Bank :
+	
+	Array
+	(
+	    [3] => Array
+	        (
+	            [date] => 2016-11-22
+	            [description] => Array
+	                (
+	                	//Transaksi Antar Rekening
+	                    [0] => TRSF E-BANKING CR 
+	                    [1] => 11/22 33223       
+	                    [2] => Komentar              
+	                    [3] => Kadek Jayak
+	                    [4] => 0000
+	                    [5] => 20,000.00 //Jumlah Transfer
+	                )
+
+	            [flows] => CR
+	        )
+
+	    [4] => Array
+	        (
+	            [date] => 2016-11-25
+	            [description] => Array
+	                (
+	                	//Transaksi Antar BANK
+	                    [0] => SWITCHING CR      
+	                    [1] => TRANSFER   DR 013 
+	                    [2] => Kadek Jayak
+	                    [3] => Nama BANK
+	                    [4] => 0999
+	                    [5] => 200,000.00
+	                )
+
+	            [flows] => CR
+	        )
+
+	)
+
 ## Notes
-Untuk debug atau menampilkan response CURL nya, cukup ubah value `BCA_PARSER_DEBUG` pada class ini menjadi `true`
+Untuk debug atau menampilkan response CURL nya, cukup ubah value `BCA_PARSER_DEBUG` pada class ini menjadi `true`.
+Aktivitas login dibatasi setiap 10 menit oleh bank, jika ingin membuat script "autocheck" pastikan waktu interval pengecekan nya diatas 10 menit !.

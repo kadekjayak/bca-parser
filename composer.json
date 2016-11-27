@@ -1,6 +1,6 @@
 {
     "name": "kadekjayak/bca-parser",
-    "description": "Scrapper for KLIK BCA",
+    "description": "Scrapper for KlikBCA",
     "type": "library",
     "license": "Apache",
     "authors": [
