@@ -10,7 +10,7 @@
  * @version    0.1
  */
 
-define('BCA_PARSER_DEBUG', true);
+define('BCA_PARSER_DEBUG', false);
 
 class BCAParser {
 	
