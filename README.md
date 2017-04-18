@@ -74,6 +74,14 @@ Struktur Array yang dihasilkan kurang lebih seperti berikut, perhatikan ada perb
 
 	)
 
+
+### Logout
+Logout dapat dilakukan dengan memanggil method `logout()`, pastikan anda logout setelah mengambil data transaksi, jika tidak kemungkinan anda harus menunggu 10 menit untuk dapat login melalui web KlikBca.
+
+
 ## Notes
 Untuk debug atau menampilkan response CURL nya, cukup ubah value `BCA_PARSER_DEBUG` pada class ini menjadi `true`.
 Aktivitas login dibatasi setiap 10 menit oleh bank, jika ingin membuat script "autocheck" pastikan waktu interval pengecekan nya diatas 10 menit !.
+
+Update: 
+- Lakukan Logout setelah mengambil data transaksi dari klikBca dengan begitu anda tidak perlu menunggu 10 menit untuk proses berikutnya *Perlu di Test

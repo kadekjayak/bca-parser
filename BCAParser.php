@@ -10,7 +10,7 @@
  * @version    0.1
  */
 
-define('BCA_PARSER_DEBUG', false);
+define('BCA_PARSER_DEBUG', true);
 
 class BCAParser {
 	
@@ -22,6 +22,7 @@ class BCAParser {
 	public $_defaultTargets = [
 		'loginUrl' => 'https://m.klikbca.com/login.jsp',
 		'loginAction' => 'https://m.klikbca.com/authentication.do',
+		'logoutAction' => 'https://m.klikbca.com/authentication.do?value(actions)=logout'
 	];
 	protected $isLoggedIn = false;
 	
@@ -193,7 +194,7 @@ class BCAParser {
 		curl_setopt( $this->curlHandle, CURLOPT_REFERER, 'https://m.klikbca.com/accountstmt.do?value(actions)=acct_stmt' );
 		curl_setopt( $this->curlHandle, CURLOPT_POSTFIELDS, $params );
 		$html = $this->exec();
-		
+
 		return $this->getMutasiRekeningTable($html);
 	}
 	
@@ -208,7 +209,12 @@ class BCAParser {
 	{
 		$dom = new DOMDocument();
 	
-		$dom->loadHTML($html);
+		if ( BCA_PARSER_DEBUG ) {
+			$dom->loadHTML($html);	
+		} else {
+			@$dom->loadHTML($html);	
+		}
+		
 		$dom->getElementById('pagebody');
 		
 		$table = $dom->getElementsByTagName('table');
@@ -298,6 +304,23 @@ class BCAParser {
 			return $row['flows'] == 'DB';
 		});
 		return $result;
+	}
+
+
+	/**
+	* Logout
+	* 
+	* Logout from KlikBca website
+	* Lakukan logout setiap transaksi berakhir!
+	*
+	* @return string
+	*/
+	public function logout()
+	{
+		$this->curlSetGet();
+		curl_setopt( $this->curlHandle, CURLOPT_URL, $this->_defaultTargets['logoutAction'] );
+		curl_setopt( $this->curlHandle, CURLOPT_REFERER, $this->_defaultTargets['loginUrl'] );
+		return $this->exec();
 	}
 
 }
