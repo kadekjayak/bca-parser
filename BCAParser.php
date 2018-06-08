@@ -281,7 +281,7 @@ class BCAParser {
 	public function getTransaksiCredit($from, $to)
 	{
 		$result = $this->getListTransaksi($from, $to);
-		$result = array_filter($results, function($row){
+		$result = array_filter($result, function($row){
 			return $row['flows'] == 'CR';
 		});
 		return $result;
