@@ -9,5 +9,10 @@
             "email": "kadekjayak@yahoo.co.id"
         }
     ],
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "BCAParser\\":"src/"
+        }
+    }
 }

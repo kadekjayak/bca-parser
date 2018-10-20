@@ -1,4 +1,6 @@
 <?php
+
+namespace BCAParser;
 /**
  * Handle login request on m.bca
  *
@@ -9,6 +11,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0  Apache License 2.0
  * @version    0.1
  */
+
+use DOMDocument;
 
 define('BCA_PARSER_DEBUG', false);
 
