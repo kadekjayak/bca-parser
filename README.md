@@ -2,9 +2,9 @@
 Class ini berfungsi untuk login dan mengambil data daftar mutasi rekening di KlikBCA (m.klikbca.com)
 
 ## Installation
-Download class nya, kemudian include di project php mu...
-	
-	require 'BCAParser.php';
+Install dengan composer:
+
+	composer require kadekjayak/bca-parser:dev-master
 
 ##Requirements
 * PHP curl
@@ -16,7 +16,8 @@ fungsi kelas ini cuma 2 yaitu Login, dan mengambil tabel data transaksi berdasar
 
 ### Login
 ketika class ini di di buat, secara otomatis ia akan login ke klik bca melalui CURL
-
+	
+	use BCAParser\BCAParser;
 	$Parser = new BCAParser('username', 'password');
 	
 ### Mengambil Mutasi Rekening
