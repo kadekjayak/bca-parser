@@ -2,7 +2,7 @@
     "name": "kadekjayak/bca-parser",
     "description": "Scrapper for KlikBCA",
     "type": "library",
-    "license": "Apache",
+    "license": "MIT",
     "authors": [
         {
             "name": "kadekjayak",
