@@ -75,6 +75,22 @@ Struktur Array yang dihasilkan kurang lebih seperti berikut, perhatikan ada perb
 
 	)
 
+### Mengambil saldo
+Untuk mendapatkan saldo rekening
+
+    $saldoArray = $Parse->getSaldo()
+    
+Contoh response:
+```
+Array(
+    [2] => Array
+        (
+            [rekening] => "4690249XXX"
+            [saldo] => "1,XXX,XXX.00"
+        )
+)
+```    
+
 
 ### Logout
 Logout dapat dilakukan dengan memanggil method `logout()`, pastikan anda logout setelah mengambil data transaksi, jika tidak kemungkinan anda harus menunggu 10 menit untuk dapat login melalui web KlikBca.

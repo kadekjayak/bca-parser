@@ -26,8 +26,9 @@ class BCAParser {
 	public $_defaultTargets = [
 		'loginUrl' => 'https://m.klikbca.com/login.jsp',
 		'loginAction' => 'https://m.klikbca.com/authentication.do',
-		'logoutAction' => 'https://m.klikbca.com/authentication.do?value(actions)=logout'
-	];
+		'logoutAction' => 'https://m.klikbca.com/authentication.do?value(actions)=logout',
+        'cekSaldoUrl' => 'https://m.klikbca.com/balanceinquiry.do',
+    ];
 	protected $isLoggedIn = false;
 	
 	protected $ipAddress;
@@ -310,6 +311,86 @@ class BCAParser {
 		return $result;
 	}
 
+    /**
+     * Get saldo rekening pages
+     *
+     * @return string
+     */
+    public function getSaldo()
+    {
+        if( !$this->isLoggedIn ) $this->login( $this->username, $this->password );
+
+        $this->curlSetPost();
+
+        curl_setopt( $this->curlHandle, CURLOPT_URL, 'https://m.klikbca.com/accountstmt.do?value(actions)=menu' );
+        curl_setopt( $this->curlHandle, CURLOPT_REFERER, $this->_defaultTargets['loginAction'] );
+        $this->exec();
+
+        curl_setopt( $this->curlHandle, CURLOPT_URL, $this->_defaultTargets['cekSaldoUrl'] );
+        curl_setopt( $this->curlHandle, CURLOPT_REFERER, 'https://m.klikbca.com/accountstmt.do?value(actions)=menu' );
+        $result = $this->exec();
+
+        $result = $this->getSaldoRekeningTable($result);
+        $result = $this->getArrayValuesSaldo($result);
+
+        return $result;
+    }
+
+    /**
+     * Get array value from data saldo page
+     *
+     * @param  string $html
+     * @return array
+     *  {
+     *     {'rekening'=>'norek1', 'saldo'=>'100.000'},
+     *     {'rekening'=>'norek2', 'saldo'=>'100.000'}
+     *  }
+     */
+    private function getArrayValuesSaldo($html)
+    {
+        $dom = new DOMDocument();
+        $dom->loadHTML($html);
+        $table = $dom->getElementsByTagName('table');
+        $rows = $dom->getElementsByTagName('tr');
+
+        $datas = [];
+        for ($i = 0; $i < $rows->length; $i++) {
+            if($i == 0) continue; // skip head
+
+            $cols = $rows->item($i)->getElementsbyTagName("td");
+
+            $rekening = $cols->item(0)->nodeValue;
+            $saldo = $cols->item(2)->nodeValue;
+
+            $data = compact('rekening','saldo');
+            $datas[] = $data;
+        }
+        return $datas;
+    }
+
+    /**
+     * Parse the pages on saldo rekening
+     * this method will return only elements on <table> tag that contain only rekening and its saldo
+     *
+     * @param string $html
+     * @return string
+     */
+    private function getSaldoRekeningTable($html)
+    {
+        $dom = new DOMDocument();
+
+        if ( BCA_PARSER_DEBUG ) {
+            $dom->loadHTML($html);
+        } else {
+            @$dom->loadHTML($html);
+        }
+
+        $dom->getElementById('pagebody');
+
+        $table = $dom->getElementsByTagName('table');
+        $table = $table->item(3);
+        return $dom->saveHTML($table);
+    }
 
 	/**
 	* Logout
