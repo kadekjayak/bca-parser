@@ -302,7 +302,12 @@ class BCAParser {
 		return $dom->saveHTML($table);
 	}
 
-
+	/**
+	 * Get Array Values from an HTML <table> element
+	 *
+	 * @param string $html
+	 * @return array
+	 */
 	private function getArrayValues($html)
 	{
 		$dom = new DOMDocument();
@@ -315,21 +320,31 @@ class BCAParser {
 			if($i== 0 ) continue;
 		    $cols = $rows->item($i)->getElementsbyTagName("td");
 
-		    $date = $cols->item(0)->nodeValue;
-		    $date = explode('/', $date);
-		    $date = date('Y') . '-' . $date[1] . '-' . $date[0];
-
+			// PEND menunjukkan transaksi telah berhasil dilakukan namun belum dibukukan oleh pihak BCA
+			// https://twitter.com/HaloBCA/status/993661368724156416
+		    $date = trim( $cols->item(0)->nodeValue );
+			if ( $date != 'PEND' ) {
+				$date = explode('/', $date);
+				$date = date('Y') . '-' . $date[1] . '-' . $date[0];
+			}
+		    
 		    $description = $cols->item(1);
-		    $flows = $cols->item(2)->nodeValue;
+		    $flows = trim( $cols->item(2)->nodeValue );
 		    $descriptionText = $dom->saveHTML($description);
 
 		    $descriptionText = str_replace('<td>', '', $descriptionText);
 		    $descriptionText = str_replace('</td>', '', $descriptionText);
 		    $description = explode('<br>', $descriptionText);
-
+			
+			// Trim array Values
+			if ( is_array( $description ) ) {
+				$description = array_map('trim', $description);
+			}
+			
 		    $data = compact('date','description', 'flows');
 		    $datas[] = $data;
 		}
+		
 		return $datas;
 	}
 
