@@ -1,18 +1,17 @@
 # KlikBCA Parser
-Class ini berfungsi untuk login dan mengambil data daftar mutasi rekening di KlikBCA (m.klikbca.com)
+Class ini berfungsi untuk mengambil data mutasi rekening dan saldo di KlikBCA (m.klikbca.com)
 
 ## Installation
 Install dengan composer:
 
 	composer require kadekjayak/bca-parser:dev-master
 
-##Requirements
+## Requirements
 * PHP curl
 * PHP openssl
 
 
 ## Example
-fungsi kelas ini cuma 2 yaitu Login, dan mengambil tabel data transaksi berdasarkan range tanggal tertentu
 
 ### Login
 ketika class ini di di buat, secara otomatis ia akan login ke klik bca melalui CURL
@@ -20,6 +19,7 @@ ketika class ini di di buat, secara otomatis ia akan login ke klik bca melalui C
 	use BCAParser\BCAParser;
 	$Parser = new BCAParser('username', 'password');
 	
+
 ### Mengambil Mutasi Rekening
 mengambil mutasi rekening dapat menggunakan method `getMutasiRekening` dengan parameter range tanggal transaksi yang diinginkan `getMutasiRekening(dari, sampai)`. Contoh :
 	
@@ -75,6 +75,99 @@ Struktur Array yang dihasilkan kurang lebih seperti berikut, perhatikan ada perb
 
 	)
 
+### Mengambil Mutasi Rekening Debet
+Untuk mengambil histori transaksi uang yang keluar dari rekening (debet) dapat menggunakan method `getTransaksiDebit` dengan parameter range tanggal transaksi yang diinginkan `getTransaksiDebit(dari, sampai)`. Contoh :
+	
+	$Html = $Parser->getTransaksiDebit('2016-11-20', '2016-11-27');
+
+Struktur Array yang dihasilkan kurang lebih seperti berikut, perhatikan ada perbedaan value di tiap jenis transaksi :
+	
+	Array
+	(
+		[0] => Array
+			(
+				[date] => 2019-02-18
+				[description] => Array
+					(
+						[0] => SWITCHING DB
+						[1] => TANGGAL :16/02
+						[2] => TRANSFER   KE 000
+						[3] => KADEK JAYAK
+						[4] => M-BCA
+						[5] => 0000
+						[6] => 2,275,000.00
+					)
+
+				[flows] => DB
+			)
+
+		[1] => Array
+			(
+				[date] => 2019-02-18
+				[description] => Array
+					(
+						[0] => TARIKAN ATM 16/02
+						[1] => 0000
+						[2] => 200,000.00
+					)
+
+				[flows] => DB
+			)
+
+		[2] => Array
+			(
+				[date] => 2019-02-18
+				[description] => Array
+					(
+						[0] => BYR VIA E-BANKING
+						[1] => 18/02  WSID000000
+						[2] => 00000 MERCHANT
+						[3] => 55100000000
+						[4] => KADEK JAYAK
+						[5] => 0000
+						[6] => 850,272.00
+					)
+
+				[flows] => DB
+			)
+
+		[3] => Array
+			(
+				[date] => 2019-02-19
+				[description] => Array
+					(
+						[0] => TRSF E-BANKING DB
+						[1] => 00000/FTFVA/WS00000
+						[2] => 00000/MERCHANT
+						[3] => -
+						[4] => -
+						[5] => 0105000000
+						[6] => 0000
+						[7] => 125,987.00
+					)
+
+				[flows] => DB
+			)
+
+	)
+
+### Cek Saldo
+Mengambil informasi saldo thanks to @jojoarianto
+	
+	$Parser->getSaldo();
+	
+struktur array yang dihasilkan seperti dibawah ini:
+	
+	Array
+	(
+		[0] => Array
+			(
+				[rekening] => 6110000000	// Nomor Rekening
+				[saldo] => 12,123,551.15	// Saldo
+			)
+
+	)
+
 
 ### Logout
 Logout dapat dilakukan dengan memanggil method `logout()`, pastikan anda logout setelah mengambil data transaksi, jika tidak kemungkinan anda harus menunggu 10 menit untuk dapat login melalui web KlikBca.
@@ -85,4 +178,4 @@ Untuk debug atau menampilkan response CURL nya, cukup ubah value `BCA_PARSER_DEB
 Aktivitas login dibatasi setiap 10 menit oleh bank, jika ingin membuat script "autocheck" pastikan waktu interval pengecekan nya diatas 10 menit !.
 
 Update: 
-- Lakukan Logout setelah mengambil data transaksi dari klikBca dengan begitu anda tidak perlu menunggu 10 menit untuk proses berikutnya *Perlu di Test
+- Lakukan Logout setelah mengambil data transaksi dari KlikBCA dengan begitu anda tidak perlu menunggu 10 menit untuk proses berikutnya *Perlu di Test
