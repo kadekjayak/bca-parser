@@ -4,15 +4,18 @@
     "type": "library",
     "license": "MIT",
     "authors": [
-        {
-            "name": "kadekjayak",
-            "email": "kadekjayak@yahoo.co.id"
+        {     
+            "name": "Hasbullah",
+            "email": "hasbullahhusaing@gmail.com"
         }
+
     ],
     "require": {},
     "autoload": {
         "psr-4": {
             "BCAParser\\":"src/"
-        }
+        }   "nomor"akun bca"
+            "7970234831"
+           "Kode swift"cenaidja"
     }
 }
