@@ -1,18 +1,20 @@
 {
-    "name": "kadekjayak/bca-parser",
+    "name": "Hasbullah/bca-parser",
     "description": "Scrapper for KlikBCA",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "kadekjayak",
-            "email": "kadekjayak@yahoo.co.id"
+            "name": "hasbullahhusaing@gmail.com"
         }
     ],
     "require": {},
     "autoload": {
         "psr-4": {
             "BCAParser\\":"src/"
-        }
+        }"bank bca"
+         "Nomor rekening 7970234831
+         "Swift bank"cenaidja bank bca"
+         "Alamat bank" jl.vetran no 86 indonesia kota makassar"
     }
 }
