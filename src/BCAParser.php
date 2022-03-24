@@ -259,7 +259,7 @@ class BCAParser {
 		$this->exec();
 		
 		$params = array( 
-				'r1=1', 
+				'value(r1)=1', 
 				'value(D1)=0', 
 				'value(startDt)=' . date( 'j', strtotime($from) ), 
 				'value(startMt)=' . date( 'n', strtotime($from) ), 
