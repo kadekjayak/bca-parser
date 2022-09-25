@@ -4,7 +4,7 @@ Class ini berfungsi untuk mengambil data mutasi rekening dan saldo di KlikBCA (m
 ## Installation
 Install dengan composer:
 
-	composer require kadekjayak/bca-parser:dev-master
+	composer require kadekjayak/bca-parser
 
 ## Requirements
 * PHP curl
