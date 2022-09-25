@@ -13,12 +13,19 @@ Install dengan composer:
 
 ## Example
 
-### Login
-ketika class ini di di buat, secara otomatis ia akan login ke klik bca melalui CURL
+### Initialization
 	
 	use BCAParser\BCAParser;
+	
 	$Parser = new BCAParser('username', 'password');
 	
+Plugin ini menggunakan layanan [ipfy.org](https://www.ipfy.org) untuk menemukan IP Public anda.
+Jika anda memiliki IP Public yang statis, masukan pada parameter ke tiga.
+
+	$Parser = new BCAParser('username', 'password', "192.168.1.1");
+
+
+
 
 ### Mengambil Mutasi Rekening
 mengambil mutasi rekening dapat menggunakan method `getMutasiRekening` dengan parameter range tanggal transaksi yang diinginkan `getMutasiRekening(dari, sampai)`. Contoh :
