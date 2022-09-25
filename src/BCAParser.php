@@ -9,12 +9,10 @@ namespace BCAParser;
  * @author     kadekjayak <kadekjayak@yahoo.co.id>
  * @copyright  2016 kadekjayak
  * @license   http://www.apache.org/licenses/LICENSE-2.0  Apache License 2.0
- * @version    0.1
+ * @version    1.0
  */
 
 use DOMDocument;
-
-define('BCA_PARSER_DEBUG', false);
 
 class BCAParser {
 	
@@ -47,31 +45,52 @@ class BCAParser {
 	
 	/**
 	* The Constructor
-	* this class will make login request to BCA when initialized
+	* if you have static IP Address, please pass it to the 3rd parameters
+	* those will skip the ip resolver and makes the function calls faster
 	*
 	* @param string $username
 	* @param string $password
 	*/
-	public function __construct($username, $password)
+	public function __construct($username, $password, $ipAddress = null)
 	{
-		if( BCA_PARSER_DEBUG == true ) error_reporting(E_ALL);
+		if ($this->isDebug()) error_reporting(E_ALL);
+		
 		$this->username = $username;
 		$this->password = $password;
+		$this->ipAddress = $ipAddress;
+
 		$this->curlHandle = curl_init();
 		$this->setupCurl();
-		$this->login($this->username, $this->password);
+		// $this->login($this->username, $this->password);
 	}
 	
 	/**
 	* Get ip address, required on login parameters
 	*
+	* If something wrong with this 3rd party service, 
+	* cpass your public ip address from the constructor
+	* OR 
+	* extend this class and override the function with your own
+	*
 	* @return String;
 	*/
-	private function getIpAddress()
+	protected function getIpAddress()
 	{
-		if($this->ipAddress !== null) $this->ipAddress = json_decode( file_get_contents( 'http://myjsonip.appspot.com/' ) )->ip;
+		if (!$this->ipAddress) {
+			$this->ipAddress = json_decode( file_get_contents( 'https://api.ipify.org?format=json' ) )->ip;
+		}
+		
 		return $this->ipAddress;
+	}
 
+	/**
+	 * Is Debug Enabled
+	 * 
+	 * @return boolean
+	 */
+	protected function isDebug()
+	{
+		return defined("BCA_PARSER_DEBUG") && BCA_PARSER_DEBUG == true;
 	}
 	
 	/**
@@ -82,7 +101,7 @@ class BCAParser {
 	public function exec()
 	{
 		$result = curl_exec($this->curlHandle);
-		if( BCA_PARSER_DEBUG == true ) {
+		if ($this->isDebug()) {
 			$http_code = curl_getinfo($this->curlHandle, CURLINFO_HTTP_CODE);
 			print_r($result);
 
@@ -134,7 +153,7 @@ class BCAParser {
 	/**
 	* Login to BCA
 	*/
-	private function login($username, $password)
+	public function login($username, $password)
 	{
 		//Just to Get Cookies
 		curl_setopt( $this->curlHandle, CURLOPT_URL, $this->_defaultTargets['loginUrl'] );
@@ -195,7 +214,7 @@ class BCAParser {
 	{
 		$dom = new DOMDocument();
 	
-		if ( BCA_PARSER_DEBUG ) {
+		if ($this->isDebug()) {
 			$dom->loadHTML($html);	
 		} else {
 			@$dom->loadHTML($html);	
@@ -289,7 +308,7 @@ class BCAParser {
 	{
 		$dom = new DOMDocument();
 	
-		if ( BCA_PARSER_DEBUG ) {
+		if ($this->isDebug()) {
 			$dom->loadHTML($html);	
 		} else {
 			@$dom->loadHTML($html);	
@@ -416,6 +435,13 @@ class BCAParser {
 		curl_setopt( $this->curlHandle, CURLOPT_URL, $this->_defaultTargets['logoutAction'] );
 		curl_setopt( $this->curlHandle, CURLOPT_REFERER, $this->_defaultTargets['loginUrl'] );
 		return $this->exec();
+	}
+
+	/**
+	 * Get Last HTTP Code
+	 */
+	public function getLastHttpCode(){
+		return curl_getinfo($this->curlHandle, CURLINFO_HTTP_CODE);
 	}
 
 }

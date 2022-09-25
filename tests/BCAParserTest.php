@@ -16,10 +16,29 @@ class BCAParserTest extends TestCase
     {
         $this->username = getenv("BCA_USERNAME");
         $this->password = getenv("BCA_PASSWORD");
-
         $this->client = new BCAParser($this->username, $this->password);
+
+        /**
+         * Add Delays before each calls
+         * I'm affraid they'll block the account if we did it too fast
+         */
+        sleep(5);
     }
 
+    /**
+     * Test Authentication
+     */
+    public function testAuthentication(): void 
+    {
+        $this->client->login($this->username, $this->password);
+        $this->client->logout();
+
+        $this->assertTrue(200 == intval($this->client->getLastHttpCode()));
+    }
+
+    /**
+     * @depends testAuthentication
+     */
     public function testGetBalance(): void
     {
         $balance = $this->client->getSaldo();
@@ -32,6 +51,9 @@ class BCAParserTest extends TestCase
         $this->assertArrayHasKey('saldo', $tx);
     }
 
+    /**
+     * @depends testGetBalance
+     */
     public function testGetTransactionMutation(): void
     {
         $fromDate = date('Y-m-d', strtotime(date('Y-m-d') . ' - 1 week'));
@@ -49,6 +71,9 @@ class BCAParserTest extends TestCase
         }
     }
 
+    /**
+     * @depends testGetTransactionMutation
+     */
     public function testGetTransactionDebit(): void
     {
         $fromDate = date('Y-m-d', strtotime(date('Y-m-d') . ' - 1 week'));
@@ -66,6 +91,9 @@ class BCAParserTest extends TestCase
         }
     }
 
+    /**
+     * @depends testGetTransactionDebit
+     */
     public function testGetTransactionCredit(): void
     {
         $fromDate = date('Y-m-d', strtotime(date('Y-m-d') . ' - 1 week'));

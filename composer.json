@@ -9,17 +9,22 @@
             "email": "kadekjayak@yahoo.co.id"
         }
     ],
-    "require": {
-        "phpunit/phpunit": "^9.5"
-    },
     "autoload": {
         "psr-4": {
-            "BCAParser\\":"src/"
+            "BCAParser\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "BCAParser\\Tests\\": "tests/"
         }
+    },
+    "require": {
+        "ext-curl": "*",
+        "ext-xml": "*",
+        "ext-dom": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
     }
 }
