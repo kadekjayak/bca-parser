@@ -1,2 +1,4 @@
 vendor
 cookiejar
+phpunit.xml
+*.cache
